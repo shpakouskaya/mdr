@@ -1,5 +1,4 @@
 import * as React from "react";
-// import ProgressBar from "./ProgressBar.tsx";
 import LumonLogo from "./LumonLogo.tsx";
 
 const Header: React.FC = () => {
@@ -13,7 +12,6 @@ const Header: React.FC = () => {
                 <div className="flex items-center space-x-4 mr-20">
                     <span className="text-lg">{completion}% Complete</span>
                     <LumonLogo/>
-
                 </div>
             </div>
         </header>
