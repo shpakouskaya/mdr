@@ -1,13 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useMemo, useRef} from "react";
 import { SelectionArea, SelectionEvent } from "@viselect/react";
-// import "viselect/dist/viselect.css";
 
 const GRID_ROWS = 10;
 const GRID_COLS = 20;
 
+// Predefined wiggle classes
+const WIGGLE_CLASSES = ["wiggle-1", "wiggle-2", "wiggle-3", "wiggle-4"];
+
+
 const NumberGrid: React.FC = () => {
     const [numbers, setNumbers] = useState<number[][]>([]);
     const [selected, setSelected] = useState<Set<number>>(() => new Set());
+    const [hoveredCell, setHoveredCell] = useState<number | null>(null); // Track the hovered cell
+
+
+    // Generate the random classes for all elements only ONCE using useMemo
+    // The array is initialized ONCE when the component is mounted.
+    const randomClasses = useMemo(() => {
+        const classes: Record<number, string> = {};
+        for (let i = 0; i < GRID_ROWS * GRID_COLS; i++) {
+            classes[i] = WIGGLE_CLASSES[Math.floor(Math.random() * WIGGLE_CLASSES.length)];
+        }
+        return classes;
+    }, []);
+
 
     useEffect(() => {
         // Generate initial grid
@@ -16,6 +32,7 @@ const NumberGrid: React.FC = () => {
         );
         setNumbers(initialGrid);
     }, []);
+
 
     // Utility: Extract numeric keys from the given DOM elements.
     const extractIds = (els: Element[]): number[] =>
@@ -26,6 +43,7 @@ const NumberGrid: React.FC = () => {
 
     // Clear selection on start unless ctrl/meta is held
     const onStart = ({ event, selection }: SelectionEvent) => {
+        event?.preventDefault();
         if (!event?.ctrlKey && !event?.metaKey) {
             selection.clearSelection();
             setSelected(new Set());
@@ -42,18 +60,51 @@ const NumberGrid: React.FC = () => {
         });
     };
 
-    const generateRandomStyles = () => ({
-        '--wiggle-range-x': `${Math.random() * 8 - 4}px`, // Random range between -4px and 4px
-        '--wiggle-range-y': `${Math.random() * 8 - 4}px`, // Random range between -4px and 4px
-        '--wiggle-duration': `${Math.random() * 2 + 0.5}s`, // Random duration from 0.5s to 2.5s
-    });
+    // For hover effect
+    const getNeighboringKeys = (key: number): number[] => {
+        const top = key - GRID_COLS >= 0 ? key - GRID_COLS : null;
+        const bottom = key + GRID_COLS < GRID_ROWS * GRID_COLS ? key + GRID_COLS : null;
+        const left = key % GRID_COLS !== 0 ? key - 1 : null;
+        const right = key % GRID_COLS !== GRID_COLS - 1 ? key + 1 : null;
 
+        return [top, bottom, left, right].filter((neighbor) => neighbor !== null) as number[];
+    };
+
+    // For numbers replacement
+    // const onStop = () => {
+    //     // Replace numbers for selected cells
+    //     setNumbers((prevNumbers) => {
+    //         const flatGrid = prevNumbers.flat();
+    //
+    //         // Replace numbers only for the selected cells
+    //         const updatedFlatGrid = flatGrid.map((num, index) => {
+    //             console.log("selected", selected)
+    //             if (selected.has(index)) {
+    //                 console.log("test")
+    //                 // Replace with a new random number
+    //                 return Math.floor(Math.random() * 10);
+    //             }
+    //             return num; // Keep old value
+    //         });
+    //
+    //         // Convert back to 2D
+    //         const newGrid = [];
+    //         for (let i = 0; i < updatedFlatGrid.length; i += GRID_COLS) {
+    //             newGrid.push(updatedFlatGrid.slice(i, i + GRID_COLS));
+    //         }
+    //
+    //         // Reset selection after replacing numbers
+    //         setSelected(new Set());
+    //         return newGrid;
+    //     });
+    // };
 
     return (
         <SelectionArea
             className="p-4 grid gap-2 w-full h-full select-none"
             onStart={onStart}
             onMove={onMove}
+            // onStop={onStop}
             selectables=".selectable"
             style={{
                 gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
@@ -67,23 +118,25 @@ const NumberGrid: React.FC = () => {
                         // Generate a unique numeric key for each cell.
                         const key = rowIndex * GRID_COLS + colIndex;
                         const isSelected = selected.has(key);
+                        const isHovered = key === hoveredCell;
+                        const isNeighbor = hoveredCell !== null && getNeighboringKeys(hoveredCell).includes(key);
+
                         return (
-                            <div
-                                style={generateRandomStyles()}
-                                className="wiggle-container "
-                            >
                                  <span
                                      key={colIndex}
                                      data-key={key}
-
-                                     className={`selectable inline-flex items-center justify-center m-1 w-8 h-8 text-xs transition ${
-                                         isSelected ? "border border-green-400" : ""
-                                     }`}
+                                     className={`
+                                        selectable inline-flex items-center justify-center m-1 w-8 h-8 text-xl cursor-default transition-transform duration-500
+                                        ${randomClasses[key]}
+                                        ${isHovered ? "scale-170" : ""}
+                                        ${isNeighbor ? "scale-150" : ""} 
+                                        ${isSelected ? "scale-200" : ""}
+                                     `}
+                                     onMouseEnter={() => setHoveredCell(key)}
+                                     onMouseLeave={() => setHoveredCell(null)}
                                  >
                                 {num}
                             </span>
-                            </div>
-
                         );
                     })}
                 </div>

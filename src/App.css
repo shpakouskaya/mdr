@@ -1,18 +1,53 @@
-.wiggle-container {
-    --wiggle-range-x: 0px;
-    --wiggle-range-y: 0px;
-    --wiggle-duration: 1.5s;
-
-    animation: wiggle var(--wiggle-duration) infinite alternate ease-in-out;
-    transform-origin: center;
-    transition: all 0.3s ease;
-}
-
-@keyframes wiggle {
+/*wiggle animation*/
+@keyframes wiggle-1 {
     from {
-        transform: translate(var(--wiggle-range-x), var(--wiggle-range-y));
+        transform: translate(-3px, -3px);
     }
     to {
-        transform: translate(calc(var(--wiggle-range-x) * -1), calc(var(--wiggle-range-y) * -1));
+        transform: translate(3px, 3px);
     }
+}
+
+@keyframes wiggle-2 {
+    from {
+        transform: translate(-5px, 2px);
+    }
+    to {
+        transform: translate(5px, -2px);
+    }
+}
+
+@keyframes wiggle-3 {
+    from {
+        transform: translate(2px, -4px);
+    }
+    to {
+        transform: translate(-2px, 4px);
+    }
+}
+
+@keyframes wiggle-4 {
+    from {
+        transform: translate(-7px, 3px);
+    }
+    to {
+        transform: translate(7px, -3px);
+    }
+}
+
+/* Predefined wiggle variants */
+.wiggle-1 {
+    animation: wiggle-1 1.2s infinite alternate ease-in-out;
+}
+
+.wiggle-2 {
+    animation: wiggle-2 1.8s infinite alternate ease-in-out;
+}
+
+.wiggle-3 {
+    animation: wiggle-3 2s infinite alternate ease-in-out;
+}
+
+.wiggle-4 {
+    animation: wiggle-4 1.5s infinite alternate ease-in-out;
 }
