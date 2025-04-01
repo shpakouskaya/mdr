@@ -3,7 +3,7 @@ import LumonLogo from "./LumonLogo.tsx";
 
 const Header: React.FC = () => {
     const funnyName = "Milkshake";
-    const completion = 0;
+    const completion = 67;
 
     return (
         <header className="flex w-full relative items-center justify-between py-8 px-12 border-b border-gray-600">

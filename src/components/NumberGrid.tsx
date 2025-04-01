@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useMemo, useRef} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { SelectionArea, SelectionEvent } from "@viselect/react";
 
-const GRID_ROWS = 10;
-const GRID_COLS = 20;
+const GRID_ROWS = 8;
+const GRID_COLS = 18;
 
 // Predefined wiggle classes
 const WIGGLE_CLASSES = ["wiggle-1", "wiggle-2", "wiggle-3", "wiggle-4"];
