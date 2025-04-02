@@ -10,7 +10,7 @@ const NumberGrid: React.FC = () => {
     const [numbers, setNumbers] = useState<number[][]>([]);
     const [selected, setSelected] = useState<Set<number>>(new Set());
     const [hoveredCell, setHoveredCell] = useState<number | null>(null);
-    const [selectionBox, setSelectionBox] = useState<Box>();
+    const [_, setSelectionBox] = useState<Box>();
 
     const elementsContainerRef = useRef<HTMLDivElement | null>(null);
     const selectableItems = useRef<Box[]>([]);
